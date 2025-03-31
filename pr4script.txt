@@ -1,0 +1,100 @@
+// Create a database named 'Library'
+use Library;
+// Create a collection named 'books' and insert 5 documents
+db.books.insertMany([
+  {
+    ISBNNo: 10201,
+    Title: "MongoDB Basics",
+    Publisher: "Pearsons",
+    Author: "John Doe",
+    Category: "Database",
+    Price: 1200
+  },
+  {
+    ISBNNo: 10202,
+    Title: "Advanced MongoDB",
+    Publisher: "O'Reilly",
+    Author: "Jane Smith",
+    Category: "Database",
+    Price: 1800
+  },
+  {
+    ISBNNo: 10203,
+    Title: "Data Structures with Java",
+    Publisher: "Pearsons",
+    Author: "Mark Lee",
+    Category: "Programming",
+    Price: 1500
+  },
+  {
+    ISBNNo: 10204,
+    Title: "AI Fundamentals",
+    Publisher: "Packt",
+    Author: "Alice Brown",
+    Category: "AI",
+    Price: 2200
+  },
+  {
+    ISBNNo: 10205,
+    Title: "Learning Python",
+    Publisher: "O'Reilly",
+    Author: "John Doe",
+    Category: "Programming",
+    Price: 950
+  }
+]);
+// Query to list Title, ISBNNo, and Author for all books
+db.books.find({}, { Title: 1, ISBNNo: 1, Author: 1, _id: 0 });
+// Query to list books where the price is greater than 1500
+db.books.find({ Price: { $gt: 1500 } });
+// Remove the book with ISBN 10201
+db.books.deleteOne({ ISBNNo: 10201 });
+// Query to list books published by Pearsons
+db.books.find({ Publisher: "Pearsons" });
+// Query to find books written by 'John Doe'
+db.books.find({ Author: "John Doe" });
+// Update the price of a book where ISBN is 10202
+db.books.updateOne(
+  { ISBNNo: 10202 },
+  { $set: { Price: 2000 } }
+);
+// Count the number of books in the collection
+db.books.countDocuments();
+// Query to find the most expensive book
+db.books.find().sort({ Price: -1 }).limit(1);
+// Query to find books with a price between 1000 and 2000
+db.books.find({ Price: { $gte: 1000, $lte: 2000 } });
+// Add a new field 'Stock' to all books with a default value of 10
+db.books.updateMany({}, { $set: { Stock: 10 } });
+// Remove all books in the 'AI' category
+db.books.deleteMany({ Category: "AI" });
+// Query to find books whose title contains 'MongoDB'
+db.books.find({ Title: /MongoDB/ });
+// Assuming there's a 'Year' field, query for books published after 2020
+db.books.find({ Year: { $gt: 2020 } });
+// Query to find books with a price lower than 1000
+db.books.find({ Price: { $lt: 1000 } });
+// Query to find the cheapest book
+db.books.find().sort({ Price: 1 }).limit(1);
+// Update the publisher for the book with ISBN 10203
+db.books.updateOne(
+  { ISBNNo: 10203 },
+  { $set: { Publisher: "Wiley" } }
+);
+// Remove all books with a price above 5000
+db.books.deleteMany({ Price: { $gt: 5000 } });
+// Group books by category and count them
+db.books.aggregate([
+  { $group: { _id: "$Category", count: { $sum: 1 } } }
+]);
+// Query to list distinct publishers
+db.books.distinct("Publisher");
+// Check if a book with ISBN 10201 exists
+db.books.findOne({ ISBNNo: 10201 }) !== null ? "Book exists" : "Book not found";
+// Find the average price
+var avgPrice = db.books.aggregate([{ $group: { _id: null, avgPrice: { $avg: "$Price" } } }]).toArray()[0].avgPrice;
+
+// Query for books with a price greater than the average
+db.books.find({ Price: { $gt: avgPrice } });
+// Query to retrieve books that do not belong to the 'AI' category
+db.books.find({ Category: { $ne: "AI" } });
